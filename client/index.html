@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Hebrew Books Demo</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css"
+   integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw=="
+   crossorigin=""/>
+
+ <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js"
+   integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA=="
+   crossorigin=""></script>
+
+ <script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+
+	<!-- <script src="leaflet-heat.js"></script> -->
+	<script src="Leaflet.Control.Custom.js"></script>
+
+	<style type="text/css">
+	html, body, #map {
+			height: 100%;
+	}
+	</style>
+
+</head>
+<body>
+	<div id="map"></div>
+
+	<!-- <script src="https://unpkg.com/@turf/turf@3.5.2/turf.min.js"></script> -->
+	<!-- <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script> -->
+	<!-- <script src="Leaflet.MakiMarkers.js"></script> -->
+
+	<script>
+	var DATA = {};
+	var TILE_URL = "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibmlyeWFyaXYiLCJhIjoiQjdJeWdqZyJ9.pZOwn6stABGoptmp0DH1wg";
+	var map = L.map('map').setView([34, 31], 2);
+
+	L.tileLayer(TILE_URL).addTo(map);
+
+	L.control.custom({
+    position: 'topright',
+    content : '0000',
+		id: 'year'
+	}).addTo(map);
+
+	$.getJSON("books_locations.json", function(json) {
+		DATA = json;
+		YEAR = 1550;
+		start_display(json)
+    // console.log(json); // this will show the info it in firebug console
+	});
+
+	function start_display(json){
+
+		ticker = setInterval(add_year, 500);
+
+		// for (var year = 1400 ; year < 2020 ; year++) {
+		// 	$('#year').html(year);
+		// 	data = json[year];
+		// 	$.each(data, function(i,v) {
+		// 		console.log(v);
+		// 		L.marker(v).addTo(map);
+		// 	})
+		// }
+	}
+
+	function add_year(){
+		year = ++YEAR;
+		$('#year').html(year);
+
+		data = DATA[year];
+		$.each(data, function(i,v) {
+			console.log(v);
+			L.marker(v).addTo(map);
+		});
+	}
+
+
+	</script>
+
+	</body>
+</html>
