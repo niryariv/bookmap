@@ -20,7 +20,7 @@
   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
   crossorigin="anonymous"></script>
 
-	<!-- <script src="leaflet-heat.js"></script> -->
+	<script src="leaflet-heat.js"></script>
 	<script src="Leaflet.Control.Custom.js"></script>
 
 	<style type="text/css">
@@ -38,47 +38,53 @@
 	<!-- <script src="Leaflet.MakiMarkers.js"></script> -->
 
 	<script>
+	var ctr = 0;
 	var DATA = {};
+	var YEAR = 1550;
 	var TILE_URL = "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibmlyeWFyaXYiLCJhIjoiQjdJeWdqZyJ9.pZOwn6stABGoptmp0DH1wg";
 	var map = L.map('map').setView([34, 31], 2);
 
 	L.tileLayer(TILE_URL).addTo(map);
 
+	var heat = L.heatLayer([], {'minOpacity': 0.3, 'radius': 15}).addTo(map);
+
 	L.control.custom({
     position: 'topright',
-    content : '0000',
-		id: 'year'
+    content : YEAR,
+		id: 'year',
+		style: {
+			'font-size'		: '90px',
+			'font-family'	: 'serif',
+			'color'				: '#e4472d',
+			'font-weight'	: '800'
+		}
 	}).addTo(map);
 
 	$.getJSON("books_locations.json", function(json) {
 		DATA = json;
-		YEAR = 1550;
 		start_display(json)
     // console.log(json); // this will show the info it in firebug console
 	});
 
 	function start_display(json){
 
-		ticker = setInterval(add_year, 500);
+		ticker = setInterval(add_year, 100);
 
-		// for (var year = 1400 ; year < 2020 ; year++) {
-		// 	$('#year').html(year);
-		// 	data = json[year];
-		// 	$.each(data, function(i,v) {
-		// 		console.log(v);
-		// 		L.marker(v).addTo(map);
-		// 	})
-		// }
 	}
 
 	function add_year(){
-		year = ++YEAR;
-		$('#year').html(year);
+		YEAR++;
 
-		data = DATA[year];
-		$.each(data, function(i,v) {
-			console.log(v);
-			L.marker(v).addTo(map);
+		if (YEAR > 2018) clearInterval(ticker);
+
+		$('#year').html(YEAR);
+
+		d = DATA[YEAR];
+		$.each(d, function(i,v) {
+			// console.log(YEAR, v);
+			latlng = [v[1],v[0]];
+			heat.addLatLng(latlng);
+			ctr++;
 		});
 	}
 
